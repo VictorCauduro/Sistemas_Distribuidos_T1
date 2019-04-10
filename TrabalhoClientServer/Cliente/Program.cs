@@ -10,7 +10,10 @@ namespace Cliente
 {
     class Program
     {
-              
+        static IPHostEntry ipHost = Dns.GetHostEntry(Dns.GetHostName());
+        static IPAddress ipAddr = ipHost.AddressList[0];
+        static IPEndPoint localEndPoint = new IPEndPoint(ipAddr, 11111);
+
         // Main Method 
         static void Main(string[] args)
         {
@@ -44,19 +47,10 @@ namespace Cliente
                     
                 }
             }
-           
-            ExecutaCliente(arquivos);
-        }
 
-        // ExecuteClient() Method 
-        static void ExecutaCliente(string arquivos)
-        {
-                        
             try
             {
-                IPHostEntry ipHost = Dns.GetHostEntry(Dns.GetHostName());
-                IPAddress ipAddr = ipHost.AddressList[0];
-                IPEndPoint localEndPoint = new IPEndPoint(ipAddr, 11111);
+                
 
                 // Creation TCP/IP Socket using  
                 // Socket Class Costructor 
@@ -65,12 +59,12 @@ namespace Cliente
 
                 try
                 {
-                                      
+
                     sender.Connect(localEndPoint);
                     Console.WriteLine("Socket connected to -> {0} ",
                                   sender.RemoteEndPoint.ToString());
- 
-                    
+
+
                     byte[] messageSent = Encoding.ASCII.GetBytes(ipAddr + ";" + arquivos);
                     int byteSent = sender.Send(messageSent);
 
@@ -89,10 +83,9 @@ namespace Cliente
 
                     // Close Socket using  
                     // the method Close() 
-                    sender.Shutdown(SocketShutdown.Both);
-                    sender.Close();
-                    Console.WriteLine("bruh moment 6#");
-                    Console.ReadLine();
+                    //sender.Shutdown(SocketShutdown.Both);
+                    //sender.Close();
+
                 }
 
                 // Manage of Socket's Exceptions 
@@ -119,6 +112,6 @@ namespace Cliente
 
                 Console.WriteLine(e.ToString());
             }
-        }
+        }       
     }
 }
