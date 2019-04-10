@@ -33,7 +33,15 @@ namespace Cliente
             {
                 foreach (var item in listaArquivos)
                 {
-                    arquivos = arquivos + " " + item;
+                    if (listaArquivos[0] != item)
+                    {
+                        arquivos = arquivos + "!" + item;
+                    }
+                    else
+                    {
+                        arquivos = arquivos + item;
+                    }
+                    
                 }
             }
            

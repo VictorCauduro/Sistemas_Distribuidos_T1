@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections;
+using System.Collections.Generic;
 using System.Net;
 using System.Net.Sockets;
 using System.Text;
@@ -13,6 +15,7 @@ namespace Server
         static IPEndPoint localEndPoint = new IPEndPoint(ipAddr, 11111);
         static Socket listener = new Socket(ipAddr.AddressFamily,
                          SocketType.Stream, ProtocolType.Tcp);
+        static Dictionary<string, string[]> Users = new Dictionary<string, string[]>();
 
         private static Mutex mut = new Mutex();
         private const int numIterations = 1;
@@ -55,13 +58,28 @@ namespace Server
                         else
                         {
                             mut.ReleaseMutex();
-
-                        }                            
+                        }
                     }
 
-                    Console.WriteLine("Text received -> {0} ", data);
-                    byte[] message = Encoding.ASCII.GetBytes("Test Server");
+                    Console.WriteLine("Conexão Estabelecida com: " + data);
+                    byte[] message = Encoding.ASCII.GetBytes("Conexão estabelecida com server: " + ipAddr);
 
+                    //Salvar na hash
+                    var ipUser = data.Split(";")[0];
+                    
+                    if (!data.Split(";")[1].Equals(""))
+                    {
+                        var files = data.Split(";")[1].Split("!");
+                        Users.Add(ipUser, files);
+                    }
+                    else
+                    {
+                        Users.Add(ipUser, null);
+                    }
+
+                    Console.WriteLine("Usuário cadastrado.");
+
+                   
                     // Send a message to Client  
                     // using Send() method 
                     clientSocket.Send(message);
@@ -70,8 +88,8 @@ namespace Server
                     // Close() method. After closing, 
                     // we can use the closed Socket  
                     // for a new Client Connection 
-                    clientSocket.Shutdown(SocketShutdown.Both);
-                    clientSocket.Close();
+                    //clientSocket.Shutdown(SocketShutdown.Both);
+                    //clientSocket.Close();
                     mut.ReleaseMutex();
                 }
             }
