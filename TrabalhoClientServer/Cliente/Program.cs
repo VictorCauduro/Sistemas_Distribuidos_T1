@@ -112,6 +112,25 @@ namespace Cliente
 
                 Console.WriteLine(e.ToString());
             }
+
+            bool connected = true;
+            while (connected)
+            {
+                Console.WriteLine("Escolha uma opção:" + "\n" + "1 - Requisitar arquivos" + "\n" + "2 - Sair"); 
+                var opc = Console.ReadLine();
+                switch (opc)
+                {
+                    case "1":
+                        Console.WriteLine("Requisitado arquivos");
+                        break;
+                    case "2":
+                        connected = false;
+                        break;
+                    default:
+                        Console.WriteLine("Opção inválida");
+                        break;
+                }
+            }
         }       
     }
 }
