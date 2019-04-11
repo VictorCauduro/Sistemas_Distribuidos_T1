@@ -53,6 +53,39 @@ namespace Server
                                                0, numByte);
                         if (data.Length > -1)
                         {
+                            switch (data.Split(";")[0])
+                            {
+                                case "0":
+                                    Console.WriteLine("Conexão Estabelecida com: " + data.Split(";")[1] + " Arquivos: " + data.Split(";")[2]);
+                                    byte[] message = Encoding.ASCII.GetBytes("Conexão estabelecida com server: " + ipAddr);
+                                    var ipUser = data.Split(";")[1];
+                                    //Salvar na hash
+                                    if (!data.Split(";")[2].Equals(""))
+                                    {
+                                        var files = data.Split(";")[2].Split("!");
+                                        Users.Add(ipUser, files);
+                                    }
+                                    else
+                                    {
+                                        Users.Add(ipUser, null);
+                                    }
+
+                                    Console.WriteLine("Usuário cadastrado.");
+
+
+                                    // Send a message to Client  
+                                    // using Send() method 
+                                    clientSocket.Send(message);
+
+                                    // Close client Socket using the 
+                                    // Close() method. After closing, 
+                                    // we can use the closed Socket  
+                                    // for a new Client Connection 
+                                    //clientSocket.Shutdown(SocketShutdown.Both);
+                                    //clientSocket.Close();
+                                    mut.ReleaseMutex();
+                                    break;
+                            }
                             break;
                         }
                         else
@@ -60,37 +93,6 @@ namespace Server
                             mut.ReleaseMutex();
                         }
                     }
-
-                    Console.WriteLine("Conexão Estabelecida com: " + data);
-                    byte[] message = Encoding.ASCII.GetBytes("Conexão estabelecida com server: " + ipAddr);
-
-                    //Salvar na hash
-                    var ipUser = data.Split(";")[0];
-                    
-                    if (!data.Split(";")[1].Equals(""))
-                    {
-                        var files = data.Split(";")[1].Split("!");
-                        Users.Add(ipUser, files);
-                    }
-                    else
-                    {
-                        Users.Add(ipUser, null);
-                    }
-
-                    Console.WriteLine("Usuário cadastrado.");
-
-                   
-                    // Send a message to Client  
-                    // using Send() method 
-                    clientSocket.Send(message);
-
-                    // Close client Socket using the 
-                    // Close() method. After closing, 
-                    // we can use the closed Socket  
-                    // for a new Client Connection 
-                    //clientSocket.Shutdown(SocketShutdown.Both);
-                    //clientSocket.Close();
-                    mut.ReleaseMutex();
                 }
             }
 

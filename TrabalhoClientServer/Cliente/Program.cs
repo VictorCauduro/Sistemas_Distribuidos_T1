@@ -32,7 +32,7 @@ namespace Cliente
                 Console.WriteLine("Lista de arquivos inexistente ou vazia!");
             }
             string arquivos = "";
-            if(listaArquivos.Count > 0)
+            if (listaArquivos.Count > 0)
             {
                 foreach (var item in listaArquivos)
                 {
@@ -44,13 +44,13 @@ namespace Cliente
                     {
                         arquivos = arquivos + item;
                     }
-                    
+
                 }
             }
 
             try
             {
-                
+
 
                 // Creation TCP/IP Socket using  
                 // Socket Class Costructor 
@@ -65,7 +65,7 @@ namespace Cliente
                                   sender.RemoteEndPoint.ToString());
 
 
-                    byte[] messageSent = Encoding.ASCII.GetBytes(ipAddr + ";" + arquivos);
+                    byte[] messageSent = Encoding.ASCII.GetBytes("0;" + ipAddr + ";" + arquivos);
                     int byteSent = sender.Send(messageSent);
 
                     // Data buffer 
@@ -116,7 +116,7 @@ namespace Cliente
             bool connected = true;
             while (connected)
             {
-                Console.WriteLine("Escolha uma opção:" + "\n" + "1 - Requisitar arquivos" + "\n" + "2 - Sair"); 
+                Console.WriteLine("Escolha uma opção:" + "\n" + "1 - Requisitar arquivos" + "\n" + "2 - Sair");
                 var opc = Console.ReadLine();
                 switch (opc)
                 {
@@ -131,6 +131,6 @@ namespace Cliente
                         break;
                 }
             }
-        }       
+        }
     }
 }
