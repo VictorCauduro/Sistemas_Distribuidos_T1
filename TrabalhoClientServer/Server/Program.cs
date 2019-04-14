@@ -12,32 +12,41 @@ namespace Server
     {
         static IPHostEntry ipHost = Dns.GetHostEntry(Dns.GetHostName());
         static IPAddress ipAddr = ipHost.AddressList[0];
-        static IPEndPoint localEndPoint = new IPEndPoint(ipAddr, 11111);
-        static Socket listener = new Socket(ipAddr.AddressFamily,
-                         SocketType.Stream, ProtocolType.Tcp);
         static Dictionary<string, string[]> Users = new Dictionary<string, string[]>();
+        static IPEndPoint localEndPoint = new IPEndPoint(ipAddr, 22222);
+        static Socket listener = new Socket(ipAddr.AddressFamily,
+                        SocketType.Stream, ProtocolType.Tcp);
 
-        private static Mutex mut = new Mutex();
-        private const int numIterations = 1;
-        private const int numThreads = 3;
 
+        public static void ErroGenerico()
+        {
+            Console.WriteLine("Mensagem  vazia ou inválida. Descartada.");
+        }
         static void Main(string[] args)
         {
+            listener.Bind(localEndPoint);
+            listener.Listen(10);
+            int count = 0;
+            
             try
-            {
-                listener.Bind(localEndPoint);
-                listener.Listen(10);
-
+            {              
+               
                 while (true)
                 {
 
                     Console.WriteLine("Aguardando conexão...");
+                    Socket clientSocket = listener.Accept();
+
+                      
+
+
+
 
                     // Suspend while waiting for 
                     // incoming connection Using  
                     // Accept() method the server  
                     // will accept connection of client 
-                    Socket clientSocket = listener.Accept();
+
 
                     // Data buffer 
                     byte[] bytes = new Byte[1024];
@@ -46,7 +55,7 @@ namespace Server
                     //Thread newThread = new Thread(new ThreadStart(CadastrarCliente(data, bytes, clientSocket)));
                     while (true)
                     {
-                        mut.WaitOne();
+
                         int numByte = clientSocket.Receive(bytes);
 
                         data += Encoding.ASCII.GetString(bytes,
@@ -82,15 +91,36 @@ namespace Server
                                     // we can use the closed Socket  
                                     // for a new Client Connection 
                                     //clientSocket.Shutdown(SocketShutdown.Both);
-                                    //clientSocket.Close();
-                                    mut.ReleaseMutex();
+                                    //clientSocket.Close();       
+                                    //clientSocket.Disconnect(true);
+                                    //listener.Connect(localEndPoint);
+                                    break;
+                                case "1":
+                                    Console.WriteLine("Requisição recebida");
+                                    byte[] mensagemArquivo = Encoding.ASCII.GetBytes("Arquivos disponíveis:");                                    
+                                    string aux = "";
+                                    foreach (var x in Users)
+                                    {
+                                        foreach (var k in x.Value)
+                                        {
+                                            aux = aux + k;
+                                        }
+                                    }
+                                    byte[] msgArquivos = Encoding.ASCII.GetBytes(aux);
+                                    clientSocket.Send(msgArquivos);
+
+                                    break;
+
+                                default:
+                                    ErroGenerico();
                                     break;
                             }
                             break;
                         }
                         else
                         {
-                            mut.ReleaseMutex();
+                            ErroGenerico();
+                            break;
                         }
                     }
                 }

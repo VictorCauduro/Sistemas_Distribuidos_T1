@@ -10,13 +10,16 @@ namespace Cliente
 {
     class Program
     {
-        static IPHostEntry ipHost = Dns.GetHostEntry(Dns.GetHostName());
-        static IPAddress ipAddr = ipHost.AddressList[0];
-        static IPEndPoint localEndPoint = new IPEndPoint(ipAddr, 11111);
+
 
         // Main Method 
         static void Main(string[] args)
         {
+            IPHostEntry ipHost = Dns.GetHostEntry(Dns.GetHostName());
+            IPAddress ipAddr = ipHost.AddressList[0];
+            IPEndPoint localEndPoint = new IPEndPoint(ipAddr, 22222);
+            Socket sender = new Socket(ipAddr.AddressFamily,
+                               SocketType.Stream, ProtocolType.Tcp);
             //Cria lista de arquivos
             string path = Directory.GetCurrentDirectory();
             var pathCortado = path.Split("bin");
@@ -54,8 +57,7 @@ namespace Cliente
 
                 // Creation TCP/IP Socket using  
                 // Socket Class Costructor 
-                Socket sender = new Socket(ipAddr.AddressFamily,
-                           SocketType.Stream, ProtocolType.Tcp);
+
 
                 try
                 {
@@ -85,7 +87,9 @@ namespace Cliente
                     // the method Close() 
                     //sender.Shutdown(SocketShutdown.Both);
                     //sender.Close();
-
+                    
+                    sender.Disconnect(true);
+                   
                 }
 
                 // Manage of Socket's Exceptions 
@@ -118,10 +122,15 @@ namespace Cliente
             {
                 Console.WriteLine("Escolha uma opção:" + "\n" + "1 - Requisitar arquivos" + "\n" + "2 - Sair");
                 var opc = Console.ReadLine();
+                
                 switch (opc)
                 {
                     case "1":
+                        sender.ConnectAsync(localEndPoint);
                         Console.WriteLine("Requisitado arquivos");
+                        byte[] messageSent = Encoding.ASCII.GetBytes("1;");                        
+                        int byteSent = sender.Send(messageSent);
+                        sender.Disconnect(true);                        
                         break;
                     case "2":
                         connected = false;
